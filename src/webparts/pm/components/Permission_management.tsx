@@ -25,12 +25,15 @@ export default function Permission_management(props: any) {
     const [UsersArrByGroup, setUsersArrByGroup]: any = React.useState([]);
     const [refreshState, setRefreshState] = React.useState(false);
     const [Visitors, setVisitors] = React.useState()
-    var SPROOTGroups: any = [], Groups: any = [], newGroup: any = [], arr: any = [], SpGroups: any = [], SearchGroup: any = [], temp: any = [], userNameArray: any = [];
+    const [newUsersArrByGroupp, setnewUsersArrByGroupp] = React.useState([])
+    var SPROOTGroups: any = [], Groups: any = [], newGroup: any = [], arr: any = [], SpGroups: any = [], SearchGroup: any = [], temp: any = [], userNameArray: any = [],  UsersArrByGroupp: any = [] ;
     // const [selectedOptions, setSelectedOptions] = React.useState();
     const [tempr, settempr] = React.useState([])
     const [search, setsearch]: any = React.useState(false);
     const [dGroups, setdGroups]: any = React.useState([]);
     const [value, setValue] = React.useState("");
+    const [ValueNew, setValueNew] = React.useState("");
+
 
 
 
@@ -117,7 +120,7 @@ export default function Permission_management(props: any) {
                 // sorting 
                 // setdata(allData.d.results);
                 arr = allData.d.results;
-                
+
                 for (let i = 0; i < arr.length; i++) {
                     if (arr[i].OwnerTitle != "System Account")
                         Sitegroup.push(arr[i]);
@@ -216,7 +219,7 @@ export default function Permission_management(props: any) {
 
 
     React.useEffect(() => {
-       
+
         // setTimeout(() => {
         //     setshowSnackbar(false)
         // }, 6000);
@@ -321,8 +324,8 @@ export default function Permission_management(props: any) {
 
     const GetUserByGroupId = async (groupId: any, groupName: any) => {
         var newArr: any = [];
-        var UsersArrByGroup: any = [];
-        UsersArrByGroup.length = 0;
+       
+        UsersArrByGroupp.length = 0;
         var query = "/_api/web/SiteGroups/GetById(" + groupId + ")/Users";
         await $.ajax({
             url: BaseURL1[0] + query,
@@ -357,11 +360,15 @@ export default function Permission_management(props: any) {
                         userObj.email = userEmail;
                         // userObj.userUrl = _spPageContextInfo.ProfileUrl + "?accountname=" + userLoginName;
                         // userObj.pictureUrl = _spPageContextInfo.siteAbsoluteUrl + "/_layouts/15/userphoto.aspx?size=l&accountname=" + userEmail;
-                        UsersArrByGroup.push(userObj);
+                        UsersArrByGroupp.push(userObj);
+                      
+                        
 
                     } // end of IF system account
                 }
-                ); setUsersArrByGroup(UsersArrByGroup);
+                );
+                setUsersArrByGroup(UsersArrByGroupp);
+                setnewUsersArrByGroupp(UsersArrByGroupp);
                 //
             },
             error: function (data) {
@@ -670,6 +677,29 @@ export default function Permission_management(props: any) {
 
     };
 
+    const onChangeSearch = (event: any) => {
+
+        var s =event.target.value;
+        setValueNew(s);
+        console.log(s);
+
+        if(s.length > 0){
+            var a = UsersArrByGroup.filter((data:any)=>
+            data.title.toLowerCase().includes(s)
+            )
+            setUsersArrByGroup(a)
+            console.log(a);
+        }
+        else{
+            setUsersArrByGroup(newUsersArrByGroupp);
+        }
+
+        
+
+       
+
+    };
+
     var DGroups: any = [];
 
     const onSearch = (searchTerm: any) => {
@@ -694,10 +724,19 @@ export default function Permission_management(props: any) {
         console.log("search ", searchTerm);
     };
 
-    const change = () =>{
+
+    // const onSearchh = (searchTerm: any) => {
+    //     setValue(searchTerm);
+    // }
+
+    const change = () => {
         setValue("");
         setsearch(false);
     }
+
+    const changes = () => {
+        setValueNew("");
+        }
 
 
 
@@ -743,6 +782,12 @@ export default function Permission_management(props: any) {
                                 </select>
                             </Col>
                             <Col sm={6}>
+                            <div className="search ">
+                                <input type="text" placeholder="Search User..." value={ValueNew} onChange={onChangeSearch} />
+                                <button id="btnn" onClick={() => changes()} > X </button>
+                                {/* <button onClick={() => onSearchh(value)}> Check Permission</button> */}
+
+                            </div>
                             </Col>
                         </Row>
                     </Container>
@@ -759,14 +804,14 @@ export default function Permission_management(props: any) {
                         </thead>
                         <tbody>
                             {UsersArrByGroup?.map((op: any, i: any) => {
-                                return (<tr>
+                                return (<tr className='hhh'>
                                     <td><span>{op.title}
                                     </span></td>
                                     <td>{op.email}</td>
                                     <td>
                                         <a title="Delete {{::SearchGroup.Title}}" href="javascript:void(0)"
                                             className="pull-right">
-                                            <img src="/_layouts/images/delete.gif" onClick={() => RemoveSiteOwner(op.Id)} />
+                                            <img src="/_layouts/images/delete.gif" onClick={() => RemoveSiteOwner(op.id)} />
                                         </a>
                                     </td>
                                 </tr>)
@@ -792,7 +837,7 @@ export default function Permission_management(props: any) {
 
 
                     <div >
-                        
+
                         {/* <div className="app">
                                             <h2></h2>
                                             <div className="dropdown-container">
@@ -816,12 +861,8 @@ export default function Permission_management(props: any) {
                                 <input type="text" value={value} onChange={onChange} />
                                 <button id="btn" onClick={() => change()} > X </button>
                                 <button onClick={() => onSearch(value)}> Check Permission</button>
-                                
-                            </div>
 
-                            {/* <div className='btn'>
-                                                <button onClick={() => onSearch(value)}> Check Permission</button>
-                                                </div> */}
+                            </div>
                             <div className="dropdown">
                                 {tempr?.filter((item) => {
                                     // item?.toLowerCase().includes(item);
@@ -851,16 +892,16 @@ export default function Permission_management(props: any) {
                         </div>
                         <div className='grp'>
 
-                        {search && <div >
+                            {search && <div >
 
-                            {dGroups?.map((op: any, i: any) => {
-                                return (<tr>
-                                    <td><span>{op}</span></td>
-                                </tr>)
-                            })}
+                                {dGroups?.map((op: any, i: any) => {
+                                    return (<tr>
+                                        <td><span>{op}</span></td>
+                                    </tr>)
+                                })}
 
 
-                        </div>}
+                            </div>}
                         </div>
 
 
