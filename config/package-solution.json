@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "permission-management-client-side-solution",
+    "id": "24eec68d-6b27-4068-9d17-eaed7dcc16bd",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.16.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "Permission_management description"
+      },
+      "longDescription": {
+        "default": "Permission_management description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "permission-management Feature",
+        "description": "The feature that activates elements of the permission-management solution.",
+        "id": "4285ede4-87f5-41db-afc6-2c41a6a8e694",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/permission-management.sppkg"
+  }
+}

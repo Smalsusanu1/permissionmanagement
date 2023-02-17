@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "14.19.0",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.4.1"
+    },
+    "version": "1.16.0",
+    "libraryName": "permission-management",
+    "libraryId": "24eec68d-6b27-4068-9d17-eaed7dcc16bd",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "Permission_management",
+    "solutionShortDescription": "Permission_management description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

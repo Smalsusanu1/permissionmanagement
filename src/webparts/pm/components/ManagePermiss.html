@@ -1,0 +1,241 @@
+
+<script
+    src="https://hhhhcodebase.blob.core.windows.net/hhhh/Online/ManagePermissions/ManagePermissions.js?updated=14-09-2021"></script>
+
+<style>
+    #pageTitle {
+        display: none !important;
+    }
+
+    #contentRow {
+        padding-top: 0px !important;
+    }
+
+    #ManageSiteOwners .modal-body {
+        padding: 5px !important;
+    }
+</style>
+<div ng-controller="ManagePermissionsController" ng-cloak>
+    <section class="TableContentSection">
+        <div class="container-fluid">
+            <section class="TableSection">
+                <div class="container">
+                    <div class="col-sm-12 pad0">
+                        <h4 class="text-right mb-0">
+                            <a class="hreflink" ng-click="OpenpopupCheckUserPermission()">Check User Permissions</a>
+                        </h4>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="panel panel-default " ng-repeat="Permission in GroupHierarchy">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                {{Permission.Title}}
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div ng-show="!isAdmins" class="ManagePermissionsTiles text-center">
+                                <a href="#" class="Permissiontile col-sm-3 col-md-2 col-xs-12"
+                                    ng-repeat="Group in Permission.Groups" ng-click="DisplaySiteOwners(Group.Title)">
+                                    <h2>{{Group.Title}}</h2>
+                                    <img ng-src="{{SiteUrl}}/SiteCollectionImages/ICONS/24/PermisssionUser_Icon2.png">
+                                    <span>{{Group.PermissionName}}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+    <div id="ManageSiteOwners" class="modal fade in hnav" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="false">
+        <!-- // <div id="ManageSiteOwners" class="modal fade in disnone" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false"> -->
+        <div ng-show="IsLoadSiteOwner">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">
+                            Manage Permissions
+                            <span class="pull-right">
+                                <page-settings-info webpartid="'managePermissionPopup'"></page-settings-info>
+                            </span>
+                        </h3>
+                        <button type="button" class="close minwid-10" data-dismiss="modal"
+                            ng-click="closeManageSitePopup()">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="modal-body bg-f5f5 py-3">
+                        <a href="javascript:void(0)" class="pull-right btn btn-link" title="Manage Permissions"
+                            ng-click="AddSiteOwner()">
+                            <span class="glyphicon glyphicon-plus"></span> Add User
+                        </a>
+                        <div class="clearfix"></div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-6 padb-10">
+                                    <select id="selGroups" class="form-control height-30" style="padding:0 5px;"
+                                        name="selGroups" ng-change="BindUsersByGroup()"
+                                        ng-options="item as item.Title for item in SPGroups track by item.Id"
+                                        ng-model="SearchGroup"></select>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" maxlength="50" class="form-control height-30"
+                                        placeholder="Search Users" ng-model="searchText">
+                                    <span class="searchclear" ng-show="searchText.length>0"
+                                        ng-click="clearSearchBox()">X</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-content bdrbox">
+                            <!-- Start - Display Site Owners  form-horizontal-->
+
+                            <div id="table-wrapper" class="section-event clearfix" style="padding-top: 30px!important;">
+                                <div id="table-scroll">
+                                    <div class="col-sm-12"
+                                        ng-show="(UsersArrByGroup =='undefined' || UsersArrByGroup =='null' || UsersArrByGroup.length==0  || (UsersArrByGroup|filter:searchText).length==0)&&Flag==true">
+                                        <div role="alert" class="alert alert-info text-center">
+                                            <strong>Currently, there is no user in {{SearchGroup.Title}}.</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12" ng-show="Flag==false">
+                                        <div role="alert" class="alert alert-info text-center">
+                                            <strong>
+                                                You do not have the necessary rights to access this section
+                                            </strong>
+                                        </div>
+                                    </div>
+                                    <table class="table table-hover"
+                                        ng-hide="UsersArrByGroup.length==0  || (UsersArrByGroup|filter:searchText).length==0">
+                                        <thead>
+                                            <tr>
+                                                <!--<th width="2%"></th>-->
+                                                <th class="hreflink" ng-click="orderBy='title'; reverse=!reverse;">
+                                                    <div>
+                                                        <span class="text">Title</span>
+                                                        <span ng-if="reverse&&orderBy=='title'"
+                                                            class="ms-sortarrowdown-iconouter">
+                                                            <img class="ms-sortarrowdown-icon"
+                                                                src="/_layouts/15/images/spcommon.png?rev=23" alt="">
+                                                        </span>
+                                                        <span ng-if="!reverse&&orderBy=='title'"
+                                                            class="ms-sortarrowup-iconouter">
+                                                            <img class="ms-sortarrowup-icon"
+                                                                src="/_layouts/15/images/spcommon.png?rev=23" alt="">
+                                                        </span>
+                                                        <span ng-hide="reverse==true||reverse==false"
+                                                            class="ms-sortarrowup-iconouter">
+                                                            <img class="ms-sortarrowup-icon"
+                                                                src="/_layouts/15/images/spcommon.png?rev=23" alt="">
+                                                        </span>
+                                                    </div>
+                                                </th>
+                                                <th class="hreflink" ng-click="orderBy='email'; reverse=!reverse;">
+                                                    <div>
+                                                        <span class="text">Email</span>
+                                                        <span ng-if="reverse&&orderBy=='email'"
+                                                            class="ms-sortarrowdown-iconouter">
+                                                            <img class="ms-sortarrowdown-icon"
+                                                                src="/_layouts/15/images/spcommon.png?rev=23" alt="">
+                                                        </span>
+                                                        <span ng-if="!reverse&&orderBy=='email'"
+                                                            class="ms-sortarrowup-iconouter">
+                                                            <img class="ms-sortarrowup-icon"
+                                                                src="/_layouts/15/images/spcommon.png?rev=23" alt="">
+                                                        </span>
+                                                    </div>
+                                                </th>
+                                                <th>
+                                                    <div class="text">
+                                                        <div aria-hidden="true" class=""></div>
+                                                    </div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr
+                                                data-ng-repeat="dtl in UsersArrByGroup | filter: searchText | orderBy:orderBy:reverse">
+                                                <td><span>{{dtl.title}}</span></td>
+                                                <td>{{dtl.email}}</td>
+                                                <td>
+                                                    <a title="Delete {{::SearchGroup.Title}}" href="javascript:void(0)"
+                                                        class="pull-right">
+                                                        <img ng-if="isOwner==true" src="/_layouts/images/delete.gif"
+                                                            ng-click="RemoveSiteOwner(dtl.id)">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- End  - Display Site Owners -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
+                        <a class="hreflink" ng-href="{{BaseUrl}}/_layouts/15/people.aspx?MembershipGroupId=7"
+                            target="_blank" ng-show="Flag==false">Request admin rights for this group</a>
+                        <button type="button" class="btn btn-primary" ng-click="closeManageSitePopup()">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="IsAddSiteOwner" id="PnlAddSiteOwner" class="ng-scope">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Add User in {{SearchGroup.Title}}
+                            <span class="pull-right">
+                                <page-settings-info webpartid="'addUserPopup'"></page-settings-info>
+                            </span>
+                        </h3>
+                        <button type="button" class="close minwid-10" ng-click="CancelSiteOwner()">×</button>
+                    </div>
+                    <ng-form name="siteOwnerForm" novalidate="" role="form">
+                        <div class="modal-body bg-f5f5 clearfix py-3">
+
+                            <div class="col-sm-12 mt-20 form-group">
+                                <div class="col-sm-1 no-padding">
+                                    User<span class="required">*</span>
+                                </div>
+                                <div class="col-sm-11">
+                                    <div data-ng-disabled="false" ui-people data-ng-model="Item.siteOwnerUser"
+                                        pp-is-multiuser="true" pp-account-type="User,DL" id="siteOwnerUser"
+                                        class="form-control PeopleHeight"></div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="btnSubmitUser" name="btnSubmitUser" class="btn btn-primary"
+                                data-dismiss="modal"
+                                ng-disabled="siteOwnerForm.$error.required || Item.siteOwnerUser.Id==0"
+                                ng-click="InsertSiteOwner()" title="Save changes &amp; exit" disabled="disabled">
+                                Save
+                            </button>
+                            <button type="button" class="btn btn-default" ng-click="CancelSiteOwner()"
+                                title="Discard unsaved changes &amp; exit">
+                                Cancel
+                            </button>
+                        </div>
+                    </ng-form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="pull-right">
+        <a ng-href="{{BaseUrl}}/_layouts/15/user.aspx" target="_blank">
+            OOTB
+            Permissions Management
+        </a>
+    </div>
+</div>
