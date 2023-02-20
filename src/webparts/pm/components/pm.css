@@ -137,6 +137,9 @@ div#workbenchPageContent {
     
     
 }
+.ptr{
+    cursor: pointer;
+}
 
 #btnn:active{
     color: white;

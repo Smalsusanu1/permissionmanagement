@@ -26,7 +26,7 @@ export default function Permission_management(props: any) {
     const [refreshState, setRefreshState] = React.useState(false);
     const [Visitors, setVisitors] = React.useState()
     const [newUsersArrByGroupp, setnewUsersArrByGroupp] = React.useState([])
-    var SPROOTGroups: any = [], Groups: any = [], newGroup: any = [], arr: any = [], SpGroups: any = [], SearchGroup: any = [], temp: any = [], userNameArray: any = [],  UsersArrByGroupp: any = [] ;
+    var SPROOTGroups: any = [], Groups: any = [], newGroup: any = [], arr: any = [], SpGroups: any = [], SearchGroup: any = [], temp: any = [], userNameArray: any = [], UsersArrByGroupp: any = [];
     // const [selectedOptions, setSelectedOptions] = React.useState();
     const [tempr, settempr] = React.useState([])
     const [search, setsearch]: any = React.useState(false);
@@ -324,7 +324,7 @@ export default function Permission_management(props: any) {
 
     const GetUserByGroupId = async (groupId: any, groupName: any) => {
         var newArr: any = [];
-       
+
         UsersArrByGroupp.length = 0;
         var query = "/_api/web/SiteGroups/GetById(" + groupId + ")/Users";
         await $.ajax({
@@ -361,8 +361,8 @@ export default function Permission_management(props: any) {
                         // userObj.userUrl = _spPageContextInfo.ProfileUrl + "?accountname=" + userLoginName;
                         // userObj.pictureUrl = _spPageContextInfo.siteAbsoluteUrl + "/_layouts/15/userphoto.aspx?size=l&accountname=" + userEmail;
                         UsersArrByGroupp.push(userObj);
-                      
-                        
+
+
 
                     } // end of IF system account
                 }
@@ -679,24 +679,24 @@ export default function Permission_management(props: any) {
 
     const onChangeSearch = (event: any) => {
 
-        var s =event.target.value;
+        var s = event.target.value;
         setValueNew(s);
         console.log(s);
 
-        if(s.length > 0){
-            var a = UsersArrByGroup.filter((data:any)=>
-            data.title.toLowerCase().includes(s)
+        if (s.length > 0) {
+            var a = UsersArrByGroup.filter((data: any) =>
+                data.title.toLowerCase().includes(s)
             )
             setUsersArrByGroup(a)
             console.log(a);
         }
-        else{
+        else {
             setUsersArrByGroup(newUsersArrByGroupp);
         }
 
-        
 
-       
+
+
 
     };
 
@@ -736,9 +736,16 @@ export default function Permission_management(props: any) {
 
     const changes = () => {
         setValueNew("");
-        }
+    }
+    
 
-
+const Rtitle :any = () =>{
+    console.log(UsersArrByGroup)
+    var y = [...UsersArrByGroup].reverse();
+    console.log(y);
+    setUsersArrByGroup(y);
+    
+} 
 
 
 
@@ -782,23 +789,32 @@ export default function Permission_management(props: any) {
                                 </select>
                             </Col>
                             <Col sm={6}>
-                            <div className="search ">
-                                <input type="text" placeholder="Search User..." value={ValueNew} onChange={onChangeSearch} />
-                                <button id="btnn" onClick={() => changes()} > X </button>
-                                {/* <button onClick={() => onSearchh(value)}> Check Permission</button> */}
+                                <div className="search ">
+                                    <input type="text" placeholder="Search User..." value={ValueNew} onChange={onChangeSearch} />
+                                    <button id="btnn" onClick={() => changes()} > X </button>
+                                    {/* <button onClick={() => onSearchh(value)}> Check Permission</button> */}
 
-                            </div>
+                                </div>
                             </Col>
                         </Row>
                     </Container>
                     <Table>
                         <thead>
                             <tr>
-                                <th>
-                                    Title
+                                <th onClick={() => Rtitle()} >
+                                    
+                                    <span className="ptr">
+                                        {/* <img className="ms-sortarrowup-icon" src="/_layouts/15/images/spcommon.png?rev=23" alt="" data-themekey="#"/> */}
+                                        Title
+                                        
+                                    </span>
                                 </th>
-                                <th>
-                                    Email
+                                <th onClick={() => Rtitle()} className="ptr">
+                                    
+                                    <span className="ptr">
+                                        {/* <img className="ms-sortarrowup-icon" src="/_layouts/15/images/spcommon.png?rev=23" alt="" data-themekey="#"/> */}
+                                        Email
+                                    </span>
                                 </th>
                             </tr>
                         </thead>
@@ -856,10 +872,13 @@ export default function Permission_management(props: any) {
                                             <input type="text" value={value} onChange={onChange} />
                                             <button onClick={() => onSearch(value)}> Search </button>
                                         </div> */}
+
+
+
                         <div className="search-container ">
                             <div className="search-inner ">
                                 <input type="text" value={value} onChange={onChange} />
-                                <button id="btn" onClick={() => change()} > X </button>
+                                <button id="btn" onClick={() => change()} ><img src="/_layouts/images/delete.gif" /></button>
                                 <button onClick={() => onSearch(value)}> Check Permission</button>
 
                             </div>
