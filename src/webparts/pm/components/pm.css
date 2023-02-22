@@ -133,9 +133,12 @@ div#workbenchPageContent {
     border: 0px solid transparent;
     font-size: 15px;
     position: absolute;
-    right: 69px;
+    right: 75px;
     
     
+}
+.main-225 {
+    width: 50%;
 }
 .ptr{
     cursor: pointer;
@@ -182,6 +185,12 @@ div#workbenchPageContent {
     background-color: #e7e7e7;
     border: 7px solid #e7e7e7;
     margin-left: 12%;
+}
+/* .over{
+    width: 10%;
+} */
+.main-186 {
+    width: 50%;
 }
 
   
