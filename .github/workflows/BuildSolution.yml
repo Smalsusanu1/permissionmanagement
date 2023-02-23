@@ -1,0 +1,41 @@
+name: Deploy SPFx solution
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  SHAREPOINT_SITE_URL: ${{ env.SHAREPOINT_SITE_URL }}
+  SHAREPOINT_USERNAME: ${{ env.SHAREPOINT_USERNAME }}
+  SHAREPOINT_PASSWORD: ${{ env.SHAREPOINT_PASSWORD }}
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14.19.0'
+
+    - name: Install npm packages
+      run: npm install
+      working-directory: ./
+    - name: Build the solution
+      run: npm run build
+      working-directory: ./
+
+    - name: Deploy SPFx solution
+      uses: pnp/action-deploy-spfx@v2
+      with:
+        appCatalogUrl: 'https://hhhhteams.sharepoint.com/sites/AppCatalog'
+        sppkgPath: './sharepoint/solution/hhhh-portal.sppkg'
+        username: ${{ env.SHAREPOINT_USERNAME }}
+        password: ${{ env.SHAREPOINT_PASSWORD }}
+      env:
+        SPO_SITE_URL: ${{ env.SHAREPOINT_SITE_URL }}
