@@ -31,7 +31,7 @@ jobs:
     # gulp bundle and package solution
     - name: Bundle 
       run: |
-        gulp bundle --ship --max-old-space-size=8192 --warnoff
+        gulp bundle --debug --max-old-space-size=8192 --warnoff
     - name: Package ${{ env.SAMPLE_TO_BUILD_DEPLOY }}
       run: |
         gulp package-solution --ship 
