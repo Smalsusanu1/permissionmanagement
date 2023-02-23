@@ -22,16 +22,16 @@ jobs:
 
     - name: Install npm packages
       run: npm install
-      working-directory: ./
+      working-directory: ./permissionmanagement/
     - name: Build the solution
       run: npm run build
-      working-directory: ./
+      working-directory: ./permissionmanagement/
 
     - name: Deploy SPFx solution
       uses: pnp/action-deploy-spfx@v2
       with:
         appCatalogUrl: 'https://hhhhteams.sharepoint.com/sites/AppCatalog'
-        sppkgPath: './sharepoint/solution/hhhh-portal.sppkg'
+        sppkgPath: './sharepoint/solution/permissionmanagement.sppkg'
         username: ${{ env.SHAREPOINT_USERNAME }}
         password: ${{ env.SHAREPOINT_PASSWORD }}
       env:
