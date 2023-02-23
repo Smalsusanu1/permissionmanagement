@@ -5,10 +5,7 @@ on:
     branches:
       - main
 
-env:
-  SHAREPOINT_SITE_URL: ${{ env.SHAREPOINT_SITE_URL }}
-  SHAREPOINT_USERNAME: ${{ env.SHAREPOINT_USERNAME }}
-  SHAREPOINT_PASSWORD: ${{ env.SHAREPOINT_PASSWORD }}
+
 
 jobs:
   deploy:
