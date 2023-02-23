@@ -1,38 +1,67 @@
-name: Deploy SPFx solution
+name: SPFx WebParts CICD with Office 365 CLI
 
-on:
-  push:
-    branches:
-      - main
+on: push
 
-
+# Variables that are available for all the jobs in the workflow
+env:
+  APP_FILE_PATH: 'sharepoint/solution/permissionmanagement.sppkg'
+  SEND_MAIL: 'false'
 
 jobs:
-  deploy:
-    runs-on: windows-latest
-
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
     steps:
+    # Checkout code
     - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Install Node.js
-      uses: actions/setup-node@v2
+      uses: actions/checkout@v1
+      
+    # Setup node.js runtime
+    - name: Use Node.js 14.19.0
+      uses: actions/setup-node@v1
       with:
-        node-version: '14.19.0'
-
-    - name: Install npm packages
-      run: npm install
-      working-directory: ./permissionmanagement/
-    - name: Build the solution
-      run: npm run build
-      working-directory: ./permissionmanagement/
-
-    - name: Deploy SPFx solution
-      uses: pnp/action-deploy-spfx@v2
+        node-version: 14.19.0
+    # npm install
+    - name: Run npm install
+      run: |
+        pwd
+        [ -f "package-lock.json" ] && rm package-lock.json
+        npm install
+    
+    # gulp bundle and package solution
+    - name: Bundle 
+      run: |
+        gulp bundle --ship --max-old-space-size=8192 --warnoff
+    - name: Package ${{ env.SAMPLE_TO_BUILD_DEPLOY }}
+      run: |
+        gulp package-solution --ship 
+    - name: Set pkgname
+      id: get-pkgname
+      run: |
+        echo ::set-output name=pkgname::$(find . -name *.sppkg)
+    - name: Use the output
+      run: |
+        echo 'The output pkgname is ${{ steps.get-pkgname.outputs.pkgname }}'     
+    # Login to tenant using action-cli-login
+    - name: Office 365 CLI Login
+      uses: pnp/action-cli-login@v1.0.0
       with:
-        appCatalogUrl: 'https://hhhhteams.sharepoint.com/sites/AppCatalog'
-        sppkgPath: './sharepoint/solution/permissionmanagement.sppkg'
-        username: ${{ env.SHAREPOINT_USERNAME }}
-        password: ${{ env.SHAREPOINT_PASSWORD }}
-      env:
-        SPO_SITE_URL: ${{ env.SHAREPOINT_SITE_URL }}
+        ADMIN_USERNAME:  ${{ secrets.ADMINUSERNAME }}
+        ADMIN_PASSWORD:  ${{ secrets.ADMINPASSWORD }}
+    # Deploy package to tenant using action-cli-deploy
+    - name: Office 365 CLI Deploy ${{ steps.get-pkgname.outputs.pkgname }}
+      id: o365clideploy # optional - use if output needs to be used
+      uses: pnp/action-cli-deploy@v1.0.0
+      with:
+        APP_FILE_PATH: ${{ steps.get-pkgname.outputs.pkgname }}
+        SKIP_FEATURE_DEPLOYMENT: false
+        OVERWRITE: true
+    # Send an email using action-cli-runscript
+    - name: Office 365 CLI Send email
+      uses: pnp/action-cli-runscript@v1.0.0
+      with:
+         O365_CLI_SCRIPT: o365 spo mail send --webUrl https://hhhhteams.sharepoint.com/sites/HHHH --to 'anubhav.shukla@hochhuth-consulting.de' --subject 'Deployment done' --body '<h2>Office 365 CLI</h2> <p>The deployment is complete.</p> <br/> Email sent via Office 365 CLI GitHub Action.'
+      if: env.SEND_MAIL == 'true'
+    # Print the id of the app
+    - name: Get the id of the app deployed
+      run: echo "The id of the app deployed is ${{ steps.o365clideploy.outputs.APP_ID }}"
