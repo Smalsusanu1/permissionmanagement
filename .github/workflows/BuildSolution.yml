@@ -1,7 +1,7 @@
 name: SPFx WebParts CICD with Office 365 CLI
 
 on: push
-
+ 
 # Variables that are available for all the jobs in the workflow
 env:
   APP_FILE_PATH: 'sharepoint/solution/permissionmanagement.sppkg'
