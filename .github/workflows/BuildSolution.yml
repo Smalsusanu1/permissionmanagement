@@ -34,7 +34,7 @@ jobs:
     # gulp bundle and package solution
     - name: Bundle and package
       run: |
-        gulp bundle --ship
+        gulp bundle --debug
         gulp package-solution --ship    
     
     # Login to tenant using action-cli-login
