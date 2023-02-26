@@ -1,60 +1,46 @@
-name: SPFx CICD with Office 365 CLI
+name: Build and Deploy SPFX packages to Developer environment
 
-on: push
-
-# Variables that are available for all the jobs in the workflow
-env:
-  SPPKG_FILE_NAME: 'permission-management.sppkg'
-  SEND_MAIL: 'true'
+on: 
+  push: 
+    branches: 
+      main
 
 jobs:
-  build-and-deploy:
+  build-and-deploy-webpart:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./
     
     steps:
-    # Checkout code
     - name: Checkout code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       
-    # Setup node.js runtime
-    - name: Use Node.js 14.19.0
+    - name: Use Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 14.19.0
     
-    # npm install
-    - name: Run npm ci
-      run: npm ci
-    
-    # install gulp if mac
-    - name: Run npm i -g gulp
-      run: npm i -g gulp
-      if: runner.os == 'macOS'
-    
-    # gulp bundle and package solution
+    - name: Install from package-lock.json
+      run: |
+                npm ci
+        # gulp bundle and package solution
     - name: Bundle and package
       run: |
         gulp bundle --debug
         gulp package-solution --ship    
-    
-    # Login to tenant using action-cli-login
+
     - name: Office 365 CLI Login
       uses: pnp/action-cli-login@v1.0.0
       with:
         ADMIN_USERNAME:  ${{ secrets.ADMINUSERNAME }}
         ADMIN_PASSWORD:  ${{ secrets.ADMINPASSWORD }}
-    
-    # Deploy package to tenant using action-cli-deploy
-    - name: Office 365 CLI Deploy
+
+    - name: Deploy to locations-dev app catalog
       uses: pnp/action-cli-deploy@v1.0.0
       with:
-        APP_FILE_PATH: sharepoint/solution/${{ env.SPPKG_FILE_NAME }}
-        # SKIP_FEATURE_DEPLOYMENT: true
-        # OVERWRITE: true
-    
-    # Send an email using action-cli-runscript
-#     - name: Office 365 CLI Send email
-#       uses: pnp/action-cli-runscript@v1.0.0
-#       with:
-#          O365_CLI_SCRIPT: o365 spo mail send --webUrl https://contoso.sharepoint.com/sites/teamsite --to 'user@contoso.onmicrosoft.com' --subject 'Deployment done' --body '<h2>Office 365 CLI</h2> <p>The deployment is complete.</p> <br/> Email sent via Office 365 CLI GitHub Action.'
-#       if: env.SEND_MAIL == 'true'
+        APP_FILE_PATH: sharepoint/solution/permission-management.sppkg
+        OVERWRITE: true
+        SCOPE: sitecollection
+        SITE_COLLECTION_URL: https://hhhhteams.sharepoint.com/sites/appcatalog
