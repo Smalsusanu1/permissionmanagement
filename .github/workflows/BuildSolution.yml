@@ -1,46 +1,54 @@
-name: Build and Deploy SPFX packages to Developer environment
+name: SPFx CI CD
 
-on: 
-  push: 
-    branches: 
-      main
+on:
+  push:
+    branches:
+      - main
+
+env:
+  packagePath: sharepoint/solution/permission-management.sppkg
 
 jobs:
-  build-and-deploy-webpart:
+  build:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./
     
     steps:
+
     - name: Checkout code
       uses: actions/checkout@v2
-      
-    - name: Use Node.js
-      uses: actions/setup-node@v1
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v1.4.2
       with:
         node-version: 14.19.0
+
+    - name: Install dependencies
+      run: npm ci
     
-    - name: Install from package-lock.json
-      run: |
-                npm ci
-        # gulp bundle and package solution
+    - name: Build solution
+      run: gulp build
+      
+    - name: Test solution
+      run: npm test
+              
     - name: Bundle and package
       run: |
-        gulp bundle --debug
-        gulp package-solution --ship    
-
+        gulp bundle --ship
+        gulp package-solution --ship
+    - name: Upload Build Package
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${{ env.packagePath }}
+              
     - name: Office 365 CLI Login
       uses: pnp/action-cli-login@v1.0.0
       with:
-        ADMIN_USERNAME:  ${{ secrets.ADMINUSERNAME }}
-        ADMIN_PASSWORD:  ${{ secrets.ADMINPASSWORD }}
-
-    - name: Deploy to locations-dev app catalog
-      uses: pnp/action-cli-deploy@v1.0.0
+        ADMIN_USERNAME: ${{ secrets.adminUsername }}
+        ADMIN_PASSWORD: ${{ secrets.adminPassword }}
+        
+      # Run bash script at the specified path in the repository
+    - name: Office 365 CLI Runscript bash
+      uses: pnp/action-cli-runscript@v1.0.0
       with:
-        APP_FILE_PATH: sharepoint/solution/permission-management.sppkg
-        OVERWRITE: true
-        SCOPE: sitecollection
-        SITE_COLLECTION_URL: https://hhhhteams.sharepoint.com/sites/appcatalog
+        O365_CLI_SCRIPT_PATH: './scripts/DeployPackage.sh'
+
