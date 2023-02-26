@@ -31,10 +31,6 @@ jobs:
         gulp bundle --debug
         gulp package-solution --ship    
 
-    - name: package
-      run: |
-                gulp dist
-
     - name: Office 365 CLI Login
       uses: pnp/action-cli-login@v1.0.0
       with:
