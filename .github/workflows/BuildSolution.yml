@@ -6,6 +6,7 @@ on: push
 env:
   SPPKG_FILE_NAME: 'permission-management.sppkg'
   SEND_MAIL: 'true'
+  
 
 jobs:
   build-and-deploy:
