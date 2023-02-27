@@ -1,54 +1,27 @@
-name: SPFx CI CD
+name: SPFx Build and Deploy
 
 on:
   push:
-    branches:
-      - main
-
-env:
-  packagePath: sharepoint/solution/permission-management.sppkg
+    branches: [main]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    
     steps:
-
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v1.4.2
+    - uses: actions/checkout@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
       with:
-        node-version: 14.19.0
-
+        node-version: '14.x'
     - name: Install dependencies
       run: npm ci
-    
     - name: Build solution
-      run: gulp build
-      
-    - name: Test solution
-      run: npm test
-              
-    - name: Bundle and package
-      run: |
-        gulp bundle --ship
-        gulp package-solution --ship
-    - name: Upload Build Package
-      uses: actions/upload-artifact@v2
+      run: npm run build --if-present
+    - name: Package solution
+      run: npm run package-solution --if-present
+    - name: Deploy solution
+      uses: PaoloPia/devops-deploy-spfx@v1
       with:
-        path: ${{ env.packagePath }}
-              
-    - name: Office 365 CLI Login
-      uses: pnp/action-cli-login@v1.0.0
-      with:
-        ADMIN_USERNAME: ${{ secrets.ADMINUSERNAME }}
-        ADMIN_PASSWORD: ${{ secrets.ADMINPASSWORD }}
-        
-      # Run bash script at the specified path in the repository
-    - name: Office 365 CLI Runscript bash
-      uses: pnp/action-cli-runscript@v1.0.0
-      with:
-        O365_CLI_SCRIPT_PATH: './scripts/DeployPackage.sh'
-
+        environment: 'Dev'
+        username: ${{ secrets.ADMINUSERNAME }}
+        password: ${{ secrets.ADMINPASSWORD }}
