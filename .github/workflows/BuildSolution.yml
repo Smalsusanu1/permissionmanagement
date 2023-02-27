@@ -1,27 +1,50 @@
-name: SPFx Build and Deploy
+name: Build and Deploy SPFX packages to Developer environment
 
-on:
-  push:
-    branches: [main]
+on: 
+  push: 
+    branches: 
+      main
 
 jobs:
-  build-and-deploy:
+  build-and-deploy-webpart:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./
+    
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Use Node.js
+      uses: actions/setup-node@v1
       with:
-        node-version: '14.x'
-    - name: Install dependencies
-      run: npm ci
-    - name: Build solution
-      run: npm run build --if-present
-    - name: Package solution
-      run: npm run package-solution --if-present
-    - name: Deploy solution
-      uses: PaoloPia/devops-deploy-spfx@v1
+        node-version: 14.19.0
+    
+    - name: Install from package-lock.json
+      run: |
+                npm ci
+        # gulp bundle and package solution
+    - name: Bundle and package
+      run: |
+        gulp bundle --debug
+        gulp package-solution --ship    
+
+    - name: package
+      run: |
+                gulp dist
+
+    - name: Office 365 CLI Login
+      uses: pnp/action-cli-login@v1.0.0
       with:
-        environment: 'Dev'
-        username: ${{ secrets.ADMINUSERNAME }}
-        password: ${{ secrets.ADMINPASSWORD }}
+        ADMIN\_USERNAME:  ${{ secrets.ADMINUSERNAME }}
+        ADMIN\_PASSWORD:  ${{ secrets.ADMINPASSWORD }}
+
+    - name: Deploy to locations-dev app catalog
+      uses: pnp/action-cli-deploy@v1.0.0
+      with:
+        APP\_FILE\_PATH: sharepoint/solution/permission-management.sppkg
+        OVERWRITE: true
+        SCOPE: sitecollection
+        SITE\_COLLECTION\_URL: https://hhhhteams.sharepoint.com/sites/appcatalog
