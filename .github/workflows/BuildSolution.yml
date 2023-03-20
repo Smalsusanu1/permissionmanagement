@@ -31,7 +31,7 @@ jobs:
     # gulp bundle and package solution
     - name: Bundle 
       run: |
-        gulp bundle --ship --warnoff
+        gulp bundle --debug --warnoff
     - name: Package ${{ env.SAMPLE_TO_BUILD_DEPLOY }}
       run: |
         gulp package-solution --ship 
