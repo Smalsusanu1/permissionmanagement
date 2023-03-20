@@ -31,20 +31,16 @@ jobs:
         gulp bundle --debug
         gulp package-solution --ship    
 
-    - name: package
-      run: |
-                gulp dist
-
     - name: Office 365 CLI Login
       uses: pnp/action-cli-login@v1.0.0
       with:
-        ADMIN\_USERNAME:  ${{ secrets.ADMINUSERNAME }}
-        ADMIN\_PASSWORD:  ${{ secrets.ADMINPASSWORD }}
+        ADMIN_USERNAME:  ${{ secrets.ADMINUSERNAME }}
+        ADMIN_PASSWORD:  ${{ secrets.ADMINPASSWORD }}
 
     - name: Deploy to locations-dev app catalog
       uses: pnp/action-cli-deploy@v1.0.0
       with:
-        APP\_FILE\_PATH: sharepoint/solution/permission-management.sppkg
+        APP_FILE_PATH: sharepoint/solution/permission-management.sppkg
         OVERWRITE: true
         SCOPE: sitecollection
-        SITE\_COLLECTION\_URL: https://hhhhteams.sharepoint.com/sites/appcatalog
+        SITE_COLLECTION_URL: https://hhhhteams.sharepoint.com/sites/appcatalog
