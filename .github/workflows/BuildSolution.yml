@@ -43,6 +43,11 @@ jobs:
       with:
         ADMIN_USERNAME:  ${{ secrets.ADMINUSERNAME }}
         ADMIN_PASSWORD:  ${{ secrets.ADMINPASSWORD }}
+        
+    #Give tenant permission
+    - name: tenant permission
+      run: |
+           Connect-PnPOnline "https://hhhhteams.sharepoint.com" -Interactive
     
     # Deploy package to tenant using action-cli-deploy
     - name: Office 365 CLI Deploy
