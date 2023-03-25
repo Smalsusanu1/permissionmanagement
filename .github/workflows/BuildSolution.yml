@@ -40,7 +40,7 @@ jobs:
      #Give tenant permission
     - name: tenant permission
       run: |
-           Connect-PnPOnline "https://hhhhteams.sharepoint.com" -Interactive
+           Register-PnPManagementShellAccess
 
     # Login to tenant using action-cli-login
     - name: Office 365 CLI Login
