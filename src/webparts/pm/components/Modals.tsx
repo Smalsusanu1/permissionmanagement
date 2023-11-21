@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Panel } from "office-ui-fabric-react";
 import { Button } from 'react-bootstrap';
 
-
+   
 
 const Modals = () => {
     const[readPanel,setreadPanel]:any=React.useState(false);
